@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Transactions</h2>
+<table border="1">
+    <tr>
+        <th>Date</th><th>Category</th><th>Amount</th><th>Description</th><th>Actions</th>
+    </tr>
+    {% for t in transactions %}
+    <tr>
+        <td>{{ t.date }}</td>
+        <td>{{ t.category }}</td>
+        <td>{{ t.amount }}</td>
+        <td>{{ t.description }}</td>
+        <td>
+            <a href="{% url 'transaction-detail' t.pk %}">View</a> |
+            <a href="{% url 'transaction-edit' t.pk %}">Edit</a> |
+            <a href="{% url 'transaction-delete' t.pk %}">Delete</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">No transactions yet.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

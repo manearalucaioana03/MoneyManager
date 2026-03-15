@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Transaction Details</h2>
+<ul>
+    <li>Date: {{ object.date }}</li>
+    <li>Category: {{ object.category }}</li>
+    <li>Amount: {{ object.amount }}</li>
+    <li>Description: {{ object.description }}</li>
+</ul>
+<a href="{% url 'transaction-edit' object.pk %}">Edit</a> |
+<a href="{% url 'transaction-delete' object.pk %}">Delete</a> |
+<a href="{% url 'transaction-list' %}">Back to list</a>
+{% endblock %}
