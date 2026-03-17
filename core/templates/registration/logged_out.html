@@ -1,4 +1,16 @@
-
-<h2>Logged out</h2>
-<p>You have been logged out. <a href="{% url 'login' %}">Login again</a></p>
+{% extends 'core/base.html' %}
+{% block title %}Logged Out{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+	<div class="col-lg-5">
+		<div class="card shadow-sm border-0">
+			<div class="card-body p-4 text-center">
+				<h2 class="mb-3">Logged out</h2>
+				<p class="text-muted">You have been logged out successfully.</p>
+				<a class="btn btn-primary" href="{% url 'login' %}">Login again</a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
 

@@ -1,11 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
-def home(request):
-	return HttpResponse('<h2>Welcome to Money Manager!</h2><p><a href="/transactions/">Go to Transactions</a></p>')
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView
 from .models import Transaction
 from .forms import TransactionForm
+
+
+def home(request):
+	return render(request, 'core/home.html')
 
 class TransactionCreateView(LoginRequiredMixin, CreateView):
 	model = Transaction
