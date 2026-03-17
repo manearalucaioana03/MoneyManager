@@ -1,19 +1,24 @@
 {% extends 'core/base.html' %}
-{% block title %}{% if object %}Edit Transaction{% else %}Add Transaction{% endif %}{% endblock %}
+{% block title %}Add Category{% endblock %}
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-lg-8">
+    <div class="col-lg-7">
         <div class="card shadow-sm border-0">
             <div class="card-body p-4">
-                <h2 class="mb-4">{% if object %}Edit{% else %}Add{% endif %} Transaction</h2>
+                <h2 class="mb-4">Add Category</h2>
+                <p class="text-muted">Choose whether the category should be treated as income or expense.</p>
                 <form method="post">
                     {% csrf_token %}
                     {% for field in form %}
                     <div class="mb-3">
+                        {% if field.name == 'is_income' %}
+                        <div class="form-check">
+                            {{ field }}
+                            <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                        {% else %}
                         <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                         {{ field }}
-                        {% if field.help_text %}
-                        <div class="form-text">{{ field.help_text }}</div>
                         {% endif %}
                         {% for error in field.errors %}
                         <div class="text-danger small">{{ error }}</div>
@@ -25,7 +30,7 @@
                     {% endfor %}
                     <div class="d-flex gap-2">
                         <button class="btn btn-primary" type="submit">Save</button>
-                        <a class="btn btn-outline-secondary" href="{% url 'transaction-list' %}">Cancel</a>
+                        <a class="btn btn-outline-secondary" href="{% url 'category-list' %}">Cancel</a>
                     </div>
                 </form>
             </div>

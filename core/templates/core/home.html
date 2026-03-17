@@ -1,0 +1,19 @@
+{% extends 'core/base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-5 text-center">
+                <h1 class="mb-3">Welcome to Money Manager</h1>
+                <p class="lead text-muted mb-4">Track transactions, manage your records, and keep your finances organized.</p>
+                <div class="d-flex justify-content-center gap-2 flex-wrap">
+                    <a class="btn btn-primary" href="{% url 'transaction-list' %}">View Transactions</a>
+                    <a class="btn btn-outline-primary" href="{% url 'transaction-add' %}">Add Transaction</a>
+                    <a class="btn btn-outline-secondary" href="{% url 'register' %}">Create Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
