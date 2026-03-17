@@ -17,6 +17,7 @@
                     <tr>
                         <th>Date</th>
                         <th>Category</th>
+                        <th>Type</th>
                         <th>Amount</th>
                         <th>Description</th>
                         <th class="text-end">Actions</th>
@@ -27,7 +28,16 @@
                     <tr>
                         <td>{{ t.date }}</td>
                         <td>{{ t.category }}</td>
-                        <td>{{ t.amount }}</td>
+                        <td>
+                            {% if t.category and t.category.is_income %}
+                            <span class="badge text-bg-success">Income</span>
+                            {% else %}
+                            <span class="badge text-bg-danger">Expense</span>
+                            {% endif %}
+                        </td>
+                        <td class="fw-semibold {% if t.category and t.category.is_income %}text-success{% else %}text-danger{% endif %}">
+                            {% if t.category and t.category.is_income %}+{% else %}-{% endif %}{{ t.amount }}
+                        </td>
                         <td>{{ t.description|default:'-' }}</td>
                         <td class="text-end">
                             <a class="btn btn-sm btn-outline-primary" href="{% url 'transaction-detail' t.pk %}">View</a>
@@ -37,7 +47,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5" class="text-center py-4">No transactions yet.</td>
+                        <td colspan="6" class="text-center py-4">No transactions yet.</td>
                     </tr>
                     {% endfor %}
                 </tbody>

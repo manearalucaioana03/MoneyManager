@@ -19,5 +19,15 @@ class Transaction(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
 
+	def transaction_type(self):
+		if self.category and self.category.is_income:
+			return 'Income'
+		return 'Expense'
+
+	def signed_amount(self):
+		if self.category and self.category.is_income:
+			return self.amount
+		return -self.amount
+
 	def __str__(self):
 		return f"Transaction: {self.amount} - {self.category.name if self.category else 'No Category'}"

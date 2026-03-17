@@ -2,12 +2,28 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView
-from .models import Transaction
-from .forms import TransactionForm
+from .models import Category, Transaction
+from .forms import CategoryForm, TransactionForm
 
 
 def home(request):
 	return render(request, 'core/home.html')
+
+
+class CategoryCreateView(LoginRequiredMixin, CreateView):
+	model = Category
+	form_class = CategoryForm
+	template_name = 'core/category_form.html'
+	success_url = reverse_lazy('category-list')
+
+
+class CategoryListView(LoginRequiredMixin, ListView):
+	model = Category
+	template_name = 'core/category_list.html'
+	context_object_name = 'categories'
+
+	def get_queryset(self):
+		return Category.objects.all().order_by('name')
 
 class TransactionCreateView(LoginRequiredMixin, CreateView):
 	model = Transaction

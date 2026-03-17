@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from .models import Transaction
+from .models import Category, Transaction
 from django.utils import timezone
 
 
@@ -15,7 +15,7 @@ class TransactionForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
         }
         help_texts = {
-            'category': 'Select a category from the available list.'
+            'category': 'Select a category from the available list or add a new one.'
         }
 
     def __init__(self, *args, **kwargs):
@@ -36,6 +36,23 @@ class TransactionForm(forms.ModelForm):
             self.add_error('date', 'Date cannot be in the future!')
         if category is None:
             self.add_error('category', 'You must select a category.')
+        return cleaned_data
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name', 'is_income']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'is_income': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        name = cleaned_data.get('name')
+        if name and Category.objects.filter(name__iexact=name.strip()).exists():
+            self.add_error('name', 'This category already exists.')
         return cleaned_data
 
 
