@@ -1,0 +1,150 @@
+{% extends 'core/base.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h2 class="mb-2">Profile</h2>
+                        <p class="text-muted mb-0">Your account details and personal finance overview.</p>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a class="btn btn-primary" href="{% url 'transaction-add' %}">Add Transaction</a>
+                        <a class="btn btn-outline-primary" href="{% url 'category-add' %}">Add Category</a>
+                        <a class="btn btn-outline-secondary" href="{% url 'transaction-list' %}">View Transactions</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Username</dt>
+                    <dd class="col-sm-9">{{ user.username }}</dd>
+                    <dt class="col-sm-3">Email</dt>
+                    <dd class="col-sm-9">{{ user.email|default:'-' }}</dd>
+                    <dt class="col-sm-3">Joined</dt>
+                    <dd class="col-sm-9">{{ user.date_joined|date:'d-m-Y H:i' }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <p class="text-muted mb-2">Transactions</p>
+                        <h4 class="mb-0">{{ transaction_count }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <p class="text-muted mb-2">Categories</p>
+                        <h4 class="mb-0">{{ category_count }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <p class="text-muted mb-2">Income</p>
+                        <h4 class="mb-0 text-success">{{ income_total }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <p class="text-muted mb-2">Expenses</p>
+                        <h4 class="mb-0 text-danger">{{ expense_total }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <p class="text-muted mb-2">Balance</p>
+                        <h4 class="mb-0 {% if balance >= 0 %}text-primary{% else %}text-danger{% endif %}">{{ balance }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <h4 class="mb-3">Statistics</h4>
+                        <canvas id="profileFinanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-0">Recent Transactions</h4>
+                            <span class="badge text-bg-light">{{ transaction_count }} total</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Category</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for transaction in recent_transactions %}
+                                    <tr>
+                                        <td>{{ transaction.date }}</td>
+                                        <td>{{ transaction.category }}</td>
+                                        <td class="{% if transaction.category and transaction.category.is_income %}text-success{% else %}text-danger{% endif %}">
+                                            {% if transaction.category and transaction.category.is_income %}+{% else %}-{% endif %}{{ transaction.amount }}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4">No transactions yet.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const profileFinanceChart = document.getElementById('profileFinanceChart');
+    if (profileFinanceChart) {
+        new Chart(profileFinanceChart, {
+            type: 'pie',
+            data: {
+                labels: ['Income', 'Expense'],
+                datasets: [{
+                    data: [{{ income_total|default:0 }}, {{ expense_total|default:0 }}],
+                    backgroundColor: ['#198754', '#dc3545'],
+                    borderWidth: 0,
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

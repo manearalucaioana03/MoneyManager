@@ -4,6 +4,7 @@ from .views_auth import RegisterView
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('profile/', views.profile, name='profile'),
     path('register/', RegisterView.as_view(), name='register'),
     path('categories/', views.CategoryListView.as_view(), name='category-list'),
     path('categories/add/', views.CategoryCreateView.as_view(), name='category-add'),
