@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth import password_validation
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 from django.db.models import Sum
@@ -114,3 +115,46 @@ class LoginForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
+
+
+class SimplePasswordResetForm(forms.Form):
+    username = forms.CharField(max_length=150)
+    email = forms.EmailField()
+    new_password1 = forms.CharField(widget=forms.PasswordInput)
+    new_password2 = forms.CharField(widget=forms.PasswordInput)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get('username')
+        email = cleaned_data.get('email')
+        new_password1 = cleaned_data.get('new_password1')
+        new_password2 = cleaned_data.get('new_password2')
+
+        user = None
+        if username and email:
+            try:
+                user = User.objects.get(username=username, email__iexact=email)
+            except User.DoesNotExist:
+                self.add_error('email', 'No user was found with this username and email.')
+
+        if new_password1 and new_password2 and new_password1 != new_password2:
+            self.add_error('new_password2', 'Passwords do not match.')
+
+        if user and new_password1:
+            try:
+                password_validation.validate_password(new_password1, user)
+            except forms.ValidationError as error:
+                self.add_error('new_password1', error)
+
+        self.user = user
+        return cleaned_data
+
+    def save(self):
+        self.user.set_password(self.cleaned_data['new_password1'])
+        self.user.save()
+        return self.user
