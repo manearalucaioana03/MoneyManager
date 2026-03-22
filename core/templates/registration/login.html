@@ -25,7 +25,7 @@
 					<button class="btn btn-primary" type="submit">Login</button>
 				</form>
 				<div class="mt-3 d-flex justify-content-between flex-wrap gap-2">
-					<span class="text-muted">Forgot password?</span>
+					<a href="{% url 'password_reset' %}">Forgot password?</a>
 					<span>Don't have an account? <a href="{% url 'register' %}">Register here</a></span>
 				</div>
 			</div>
