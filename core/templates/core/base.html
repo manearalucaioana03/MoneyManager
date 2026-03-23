@@ -32,8 +32,9 @@
                     </li>
                     {% endif %}
                 </ul>
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 align-items-center flex-wrap">
                     {% if user.is_authenticated %}
+                    <span class="navbar-text fw-semibold text-success small">Balance: {{ current_balance|floatformat:2 }}</span>
                     <a class="btn btn-outline-primary btn-sm" href="{% url 'profile' %}">{{ user.username }}</a>
                     <form method="post" action="{% url 'logout' %}" class="m-0">
                         {% csrf_token %}

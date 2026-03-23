@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Sum
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView
+from .context_processors import get_financial_summary
 from .models import Category, Transaction
 from .forms import CategoryForm, TransactionForm
 
@@ -15,15 +15,14 @@ def home(request):
 @login_required
 def profile(request):
 	transactions = Transaction.objects.filter(user=request.user)
-	income_total = transactions.filter(category__is_income=True).aggregate(total=Sum('amount'))['total'] or 0
-	expense_total = transactions.filter(category__is_income=False).aggregate(total=Sum('amount'))['total'] or 0
+	financial_summary = get_financial_summary(request.user)
 	context = {
 		'recent_transactions': transactions.order_by('-date', '-created_at')[:5],
 		'transaction_count': transactions.count(),
-		'category_count': Category.objects.count(),
-		'income_total': income_total,
-		'expense_total': expense_total,
-		'balance': income_total - expense_total,
+		'category_count': Category.objects.filter(transaction__user=request.user).distinct().count(),
+		'income_total': financial_summary['income_total'],
+		'expense_total': financial_summary['expense_total'],
+		'balance': financial_summary['current_balance'],
 	}
 	return render(request, 'core/profile.html', context)
 
