@@ -53,7 +53,7 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body">
                         <p class="text-muted mb-2">Income</p>
-                        <h4 class="mb-0 text-success">{{ income_total }}</h4>
+                        <h4 class="mb-0 text-success">{{ income_total|floatformat:2 }}</h4>
                     </div>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body">
                         <p class="text-muted mb-2">Expenses</p>
-                        <h4 class="mb-0 text-danger">{{ expense_total }}</h4>
+                        <h4 class="mb-0 text-danger">{{ expense_total|floatformat:2 }}</h4>
                     </div>
                 </div>
             </div>
@@ -69,7 +69,7 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body">
                         <p class="text-muted mb-2">Balance</p>
-                        <h4 class="mb-0 {% if balance >= 0 %}text-primary{% else %}text-danger{% endif %}">{{ balance }}</h4>
+                        <h4 class="mb-0 {% if balance >= 0 %}text-primary{% else %}text-danger{% endif %}">{{ balance|floatformat:2 }}</h4>
                     </div>
                 </div>
             </div>
