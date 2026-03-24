@@ -1,3 +1,6 @@
+import smtplib
+
+from django.contrib import messages
 from django.conf import settings
 from django.core.mail import send_mail
 from django.urls import reverse_lazy
@@ -11,13 +14,20 @@ class RegisterView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        send_mail(
-            'Money Manager registration confirmation',
-            f'Hello {self.object.username}, your registration was completed successfully.',
-            settings.DEFAULT_FROM_EMAIL,
-            [self.object.email],
-            fail_silently=False,
-        )
+        try:
+            send_mail(
+                'Money Manager registration confirmation',
+                f'Hello {self.object.username}, your registration was completed successfully.',
+                settings.DEFAULT_FROM_EMAIL,
+                [self.object.email],
+                fail_silently=False,
+            )
+            messages.success(self.request, 'Account created successfully. A confirmation email was prepared.')
+        except (smtplib.SMTPException, OSError):
+            messages.warning(
+                self.request,
+                'Account created successfully, but the confirmation email could not be sent. Check email settings.',
+            )
         return response
 
 
